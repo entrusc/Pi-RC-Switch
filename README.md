@@ -9,7 +9,7 @@ This is basically a port of Suat Özgür's RC Transmitter library for Ardunio
 which you can find here: https://code.google.com/p/rc-switch/
 
 how to use?
-===========
+============
 You can then use the library in your maven projects like this:
 
     <dependency>
