@@ -36,7 +36,7 @@ Then you can use the RF-Link-Sender like this:
     transmitter.switchOff(address, 1); //switches the switch unit A off
 
 In this example the DATA IN is connected to GPIO Pin 0, the group address (which can
-be set on the switchting device) is 01011 and the switching unit to trigger is
+be set on the switchting unit) is 01011 and the switching unit to trigger is
 unit A.
 
 how to build?
