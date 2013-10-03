@@ -1,14 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.pi3g.pi</groupId>
-  <artifactId>pi-rcswitch</artifactId>
-  <version>1.0</version>
-  <packaging>jar</packaging>
+    <groupId>com.pi3g.pi</groupId>
+    <artifactId>pi-rcswitch</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-  <name>Pi RC-Switch</name>
+    <name>Pi RC-Switch</name>
     <url>http://pi3g.com</url>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <licenses>
         <license>
@@ -18,6 +24,28 @@
             <url>http://www.gnu.org/licenses/lgpl.html</url>
         </license>
     </licenses>
+
+    <scm>
+        <connection>scm:git:https://github.com/entrusc/Pi-RC-Switch</connection>
+        <developerConnection>scm:git:https://github.com/entrusc/Pi-RC-Switch</developerConnection>
+        <url>scm:git:https://github.com/entrusc/Pi-RC-Switch</url>
+    </scm>  
+    
+    <developers>
+        <developer>
+            <id>entrusc</id>
+            <name>Florian Frankenberger</name>
+            <email>f.frankenberger@darkblue.de</email>
+            <url>http://darkblue.de</url>
+            <organization>Darkblue</organization>
+            <organizationUrl>http://darkblue.de</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>     
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
