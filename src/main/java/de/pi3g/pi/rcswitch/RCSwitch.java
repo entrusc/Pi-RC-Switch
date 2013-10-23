@@ -62,8 +62,8 @@ public class RCSwitch {
 
     private final GpioPinDigitalOutput transmitterPin;
     
-    private int pulseLength = 350;
-    private int repeatTransmit = 10;
+    private final int pulseLength = 350;
+    private final int repeatTransmit = 10;
 
     public RCSwitch(Pin transmitterPin) {
         final GpioController gpio = GpioFactory.getInstance();
@@ -131,8 +131,6 @@ public class RCSwitch {
             sReturn[nReturnPos++] = '0';
         }
 
-        System.out.println("Codeword is: " + new String(sReturn));
-        
         return new String(sReturn);
     }
 
