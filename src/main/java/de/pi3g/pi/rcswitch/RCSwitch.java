@@ -6,7 +6,7 @@
  * Contributors for the Arduino library:
  * - Andre Koehler / info(at)tomate-online(dot)de
  * - Gordeev Andrey Vladimirovich / gordeev(at)openpyro(dot)com
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -48,7 +48,7 @@ import java.util.BitSet;
  * //our switching group address is 01011 (marked with 1 to 5 on the DIP switch
  * //on the switching unit itself)
  * BitSet address = RCSwitch.getSwitchGroupAddress("01011");
- * 
+ *
  * RCSwitch transmitter = new RCSwitch(RaspiPin.GPIO_00);
  * transmitter.switchOn(address, 1); //switches the switch unit A (A = 1, B = 2, ...) on
  * Thread.sleep(5000); //wait 5 sec.
@@ -61,7 +61,7 @@ import java.util.BitSet;
 public class RCSwitch {
 
     private final GpioPinDigitalOutput transmitterPin;
-    
+
     private final int pulseLength = 350;
     private final int repeatTransmit = 10;
 
@@ -69,7 +69,7 @@ public class RCSwitch {
         final GpioController gpio = GpioFactory.getInstance();
         this.transmitterPin = gpio.provisionDigitalOutputPin(transmitterPin);
     }
-    
+
     /**
      * Switch a remote switch on (Type A with 10 pole DIP switches)
      *
@@ -78,8 +78,8 @@ public class RCSwitch {
      * @param switchCode Number of the switch itself (1..4)
      */
     public void switchOn(BitSet switchGroupAddress, int switchCode) {
-        if (switchGroupAddress.length() != 5) {
-            throw new IllegalArgumentException("the switchGroupAddress must consist of exactly 5 bits!");
+        if (switchGroupAddress.length() > 5) {
+            throw new IllegalArgumentException("switch group address has more than 5 bits!");
         }
         this.sendTriState(this.getCodeWordA(switchGroupAddress, switchCode, true));
     }
@@ -92,8 +92,8 @@ public class RCSwitch {
      * @param switchCode Number of the switch itself (1..4 for A..D)
      */
     public void switchOff(BitSet switchGroupAddress, int switchCode) {
-        if (switchGroupAddress.length() != 5) {
-            throw new IllegalArgumentException("the switchGroupAddress must consist of exactly 5 bits!");
+        if (switchGroupAddress.length() > 5) {
+            throw new IllegalArgumentException("switch group address has more than 5 bits!");
         }
         this.sendTriState(this.getCodeWordA(switchGroupAddress, switchCode, false));
     }
@@ -208,10 +208,10 @@ public class RCSwitch {
             Gpio.delayMicroseconds(this.pulseLength * nLowPulses);
         }
     }
-    
+
     /**
      * convenient method to convert a string like "11011" to a BitSet.
-     * 
+     *
      * @param address
      * @return a bitset containing the address that can be used for switchOn()/switchOff()
      */
@@ -225,5 +225,5 @@ public class RCSwitch {
         }
         return bitSet;
     }
-    
+
 }
