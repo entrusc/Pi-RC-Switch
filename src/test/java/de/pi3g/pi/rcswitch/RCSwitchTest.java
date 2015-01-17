@@ -6,18 +6,29 @@ import com.pi4j.io.gpio.RaspiPin;
 
 public class RCSwitchTest {
 
+	RCSwitch transmitter = new RCSwitch(RaspiPin.GPIO_00);
+
 	@Test
 	public void testLoop() throws InterruptedException {
-		RCSwitch transmitter = new RCSwitch(RaspiPin.GPIO_00);
 
-		int it = 0;
-		while (it < 10) {
-			transmitter.switchOn(1, 1);
+		while (true) {
+			switchOn();
 			Thread.sleep(1000);
-			transmitter.switchOff(1, 1);
-			it++;
+			switchOff();
+			Thread.sleep(1000);
 		}
+	}
 
+	private void switchOn() {
+		for (int i = 0; i < 10; i++) {
+			transmitter.switchOn(1, 1);
+		}
+	}
+
+	private void switchOff() {
+		for (int i = 0; i < 10; i++) {
+			transmitter.switchOff(1, 1);
+		}
 	}
 
 }
