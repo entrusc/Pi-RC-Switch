@@ -193,7 +193,6 @@ public class RCSwitch {
 		} else {
 			sReturn[nReturnPos++] = '0';
 		}
-		sReturn[nReturnPos] = '\0';
 		return new String(sReturn);
 	}
 	
