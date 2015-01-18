@@ -97,6 +97,25 @@ public class RCSwitch {
         }
         this.sendTriState(this.getCodeWordA(switchGroupAddress, switchCode, false));
     }
+    
+    /**
+    * Switch a remote switch on (Type B with two rotary/sliding switches)
+    *
+    * @param nAddressCode Number of the switch group (1..4)
+    * @param nChannelCode Number of the switch itself (1..4)
+    */
+	public void switchOn(int nAddressCode, int nChannelCode) {
+		sendTriState(getCodeWordB(nAddressCode, nChannelCode, true));
+	}
+    /**
+    * Switch a remote switch off (Type B with two rotary/sliding switches)
+    *
+    * @param nAddressCode Number of the switch group (1..4)
+    * @param nChannelCode Number of the switch itself (1..4)
+    */
+	public void switchOff(int nAddressCode, int nChannelCode) {
+		sendTriState(getCodeWordB(nAddressCode, nChannelCode, false));
+	}
 
     /**
      * Like getCodeWord (Type A)
@@ -133,7 +152,50 @@ public class RCSwitch {
 
         return new String(sReturn);
     }
-
+    
+    
+    /**
+    * Returns a char[13], representing the Code Word to be send.
+    * A Code Word consists of 9 address bits, 3 data bits and one sync bit but in our case only the first 8 address bits and the last 2 data bits were used.
+    * A Code Bit can have 4 different states: "F" (floating), "0" (low), "1" (high), "S" (synchronous bit)
+    *
+    * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
+    * | 4 bits address (switch group) | 4 bits address (switch number) | 1 bit address (not used, so never mind) | 1 bit address (not used, so never mind) | 2 data bits (on|off) | 1 sync bit |
+    * | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | F | F | on=FF off=F0 | S |
+    * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
+    *
+    * @param nAddressCode Number of the switch group (1..4)
+    * @param nChannelCode Number of the switch itself (1..4)
+    * @param bStatus Wether to switch on (true) or off (false)
+    *
+    * @return char[13]
+    */
+	private String getCodeWordB(int nAddressCode, int nChannelCode,
+			boolean bStatus) {
+		int nReturnPos = 0;
+		char[] sReturn = new char[13];
+		String[] code = new String[] { "FFFF", "0FFF", "F0FF", "FF0F", "FFF0" };
+		if (nAddressCode < 1 || nAddressCode > 4 || nChannelCode < 1
+				|| nChannelCode > 4) {
+			return "";
+		}
+		for (int i = 0; i < 4; i++) {
+			sReturn[nReturnPos++] = code[nAddressCode].charAt(i);
+		}
+		for (int i = 0; i < 4; i++) {
+			sReturn[nReturnPos++] = code[nChannelCode].charAt(i);
+		}
+		sReturn[nReturnPos++] = 'F';
+		sReturn[nReturnPos++] = 'F';
+		sReturn[nReturnPos++] = 'F';
+		if (bStatus) {
+			sReturn[nReturnPos++] = 'F';
+		} else {
+			sReturn[nReturnPos++] = '0';
+		}
+		return new String(sReturn);
+	}
+	
     /**
      * Sends a Code Word
      *
@@ -157,6 +219,8 @@ public class RCSwitch {
             this.sendSync();
         }
     }
+    
+    
 
     /**
      * Sends a "Sync" Bit
