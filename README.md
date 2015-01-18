@@ -15,7 +15,7 @@ You can then use the library in your maven projects like this:
     <dependency>
         <groupId>de.pi3g.pi</groupId>
         <artifactId>pi-rcswitch</artifactId>
-        <version>1.2</version>
+        <version>1.3</version>
     </dependency>
 
 The hardware RF-Link-Sender must be connected like this
