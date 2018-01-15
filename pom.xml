@@ -3,7 +3,7 @@
 
     <groupId>de.pi3g.pi</groupId>
     <artifactId>pi-rcswitch</artifactId>
-    <version>1.4</version>
+    <version>1.5-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Pi RC-Switch</name>
