@@ -35,15 +35,17 @@ import java.util.BitSet;
 /**
  * Transmittes signals to 433 MHz electrical switching units. Based on the Arduino library
  * but enhanced to fit a more object oriented approach in Java.
- * <p />
+ * <p>
  * This library is designed to be used with a RF transmitter like this
  * one: http://www.watterott.com/de/RF-Link-Sender-434MHz
- * <p />
+ * </p>
+ * <p>
  * Just connect the DATA IN Pin with the pin provided in the constructor. The
  * VCC with +5V (PIN2) and GND with Ground (PIN6).
- * <p />
+ * </p>
+ * <p>
  * Usage example:
- * <p />
+ * </p>
  * <pre>
  * //our switching group address is 01011 (marked with 1 to 5 on the DIP switch
  * //on the switching unit itself)
@@ -120,14 +122,15 @@ public class RCSwitch {
     /**
      * Like getCodeWord (Type A)
      */
-    private String getCodeWordA(BitSet switchGroupAddress, int channelCode, boolean status) {
+    private String getCodeWordA(BitSet switchGroupAddress, int switchCode, boolean status) {
         int nReturnPos = 0;
         char[] sReturn = new char[12];
 
         String[] code = new String[]{"FFFFF", "0FFFF", "F0FFF", "FF0FF", "FFF0F", "FFFF0"};
 
-        if (channelCode < 1 || channelCode > 5) {
-            return "";
+        if (switchCode < 1 || switchCode > 5) {
+            throw new IllegalArgumentException("switch code has to be between "
+                    + "1 (outlet A) and 5 (outlet E)");
         }
 
         for (int i = 0; i < 5; i++) {
@@ -139,7 +142,7 @@ public class RCSwitch {
         }
 
         for (int i = 0; i < 5; i++) {
-            sReturn[nReturnPos++] = code[channelCode].charAt(i);
+            sReturn[nReturnPos++] = code[switchCode].charAt(i);
         }
 
         if (status) {
@@ -274,7 +277,7 @@ public class RCSwitch {
     /**
      * convenient method to convert a string like "11011" to a BitSet.
      *
-     * @param address
+     * @param address the string representation of the rc address
      * @return a bitset containing the address that can be used for switchOn()/switchOff()
      */
     public static BitSet getSwitchGroupAddress(String address) {
