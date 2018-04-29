@@ -22,7 +22,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-
 package de.pi3g.pi.rcswitch;
 
 import com.pi4j.io.gpio.GpioController;
@@ -33,11 +32,11 @@ import com.pi4j.wiringpi.Gpio;
 import java.util.BitSet;
 
 /**
- * Transmittes signals to 433 MHz electrical switching units. Based on the Arduino library
- * but enhanced to fit a more object oriented approach in Java.
+ * Transmittes signals to 433 MHz electrical switching units. Based on the
+ * Arduino library but enhanced to fit a more object oriented approach in Java.
  * <p>
- * This library is designed to be used with a RF transmitter like this
- * one: http://www.watterott.com/de/RF-Link-Sender-434MHz
+ * This library is designed to be used with a RF transmitter like this one:
+ * http://www.watterott.com/de/RF-Link-Sender-434MHz
  * </p>
  * <p>
  * Just connect the DATA IN Pin with the pin provided in the constructor. The
@@ -64,19 +63,26 @@ public class RCSwitch {
 
     private final GpioPinDigitalOutput transmitterPin;
 
-    private final int pulseLength = 350;
+    private Protocol protocol;
+
     private final int repeatTransmit = 10;
 
     public RCSwitch(Pin transmitterPin) {
+        this(transmitterPin, Protocol.PROTOCOL_01);
+    }
+
+    public RCSwitch(Pin transmitterPin, Protocol protocol) {
         final GpioController gpio = GpioFactory.getInstance();
         this.transmitterPin = gpio.provisionDigitalOutputPin(transmitterPin);
+        this.protocol = protocol;
     }
 
     /**
      * Switch a remote switch on (Type A with 10 pole DIP switches)
      *
-     * @param switchGroupAddress Code of the switch group (refers to DIP switches 1..5 where
-     * "1" = on and "0" = off, if all DIP switches are on it's "11111")
+     * @param switchGroupAddress Code of the switch group (refers to DIP
+     * switches 1..5 where "1" = on and "0" = off, if all DIP switches are on
+     * it's "11111")
      * @param switchCode Number of the switch itself (1..4)
      */
     public void switchOn(BitSet switchGroupAddress, int switchCode) {
@@ -89,8 +95,9 @@ public class RCSwitch {
     /**
      * Switch a remote switch off
      *
-     * @param switchGroupAddress Code of the switch group (refers to DIP switches 1..5 where
-     * "1" = on and "0" = off, if all DIP switches are on it's "11111")
+     * @param switchGroupAddress Code of the switch group (refers to DIP
+     * switches 1..5 where "1" = on and "0" = off, if all DIP switches are on
+     * it's "11111")
      * @param switchCode Number of the switch itself (1..4 for A..D)
      */
     public void switchOff(BitSet switchGroupAddress, int switchCode) {
@@ -101,22 +108,23 @@ public class RCSwitch {
     }
 
     /**
-    * Switch a remote switch on (Type B with two rotary/sliding switches)
-    *
-    * @param nAddressCode Number of the switch group (1..4)
-    * @param nChannelCode Number of the switch itself (1..4)
-    */
+     * Switch a remote switch on (Type B with two rotary/sliding switches)
+     *
+     * @param nAddressCode Number of the switch group (1..4)
+     * @param nChannelCode Number of the switch itself (1..4)
+     */
     public void switchOn(int nAddressCode, int nChannelCode) {
-            sendTriState(getCodeWordB(nAddressCode, nChannelCode, true));
+        sendTriState(getCodeWordB(nAddressCode, nChannelCode, true));
     }
+
     /**
-    * Switch a remote switch off (Type B with two rotary/sliding switches)
-    *
-    * @param nAddressCode Number of the switch group (1..4)
-    * @param nChannelCode Number of the switch itself (1..4)
-    */
+     * Switch a remote switch off (Type B with two rotary/sliding switches)
+     *
+     * @param nAddressCode Number of the switch group (1..4)
+     * @param nChannelCode Number of the switch itself (1..4)
+     */
     public void switchOff(int nAddressCode, int nChannelCode) {
-            sendTriState(getCodeWordB(nAddressCode, nChannelCode, false));
+        sendTriState(getCodeWordB(nAddressCode, nChannelCode, false));
     }
 
     /**
@@ -156,47 +164,50 @@ public class RCSwitch {
         return new String(sReturn);
     }
 
-
     /**
-    * Returns a char[13], representing the Code Word to be send.
-    * A Code Word consists of 9 address bits, 3 data bits and one sync bit but in our case only the first 8 address bits and the last 2 data bits were used.
-    * A Code Bit can have 4 different states: "F" (floating), "0" (low), "1" (high), "S" (synchronous bit)
-    *
-    * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
-    * | 4 bits address (switch group) | 4 bits address (switch number) | 1 bit address (not used, so never mind) | 1 bit address (not used, so never mind) | 2 data bits (on|off) | 1 sync bit |
-    * | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | F | F | on=FF off=F0 | S |
-    * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
-    *
-    * @param nAddressCode Number of the switch group (1..4)
-    * @param nChannelCode Number of the switch itself (1..4)
-    * @param bStatus Wether to switch on (true) or off (false)
-    *
-    * @return char[13]
-    */
+     * Returns a char[13], representing the Code Word to be send. A Code Word
+     * consists of 9 address bits, 3 data bits and one sync bit but in our case
+     * only the first 8 address bits and the last 2 data bits were used. A Code
+     * Bit can have 4 different states: "F" (floating), "0" (low), "1" (high),
+     * "S" (synchronous bit)
+     *
+     * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
+     * | 4 bits address (switch group) | 4 bits address (switch number) | 1 bit
+     * address (not used, so never mind) | 1 bit address (not used, so never
+     * mind) | 2 data bits (on|off) | 1 sync bit | | 1=0FFF 2=F0FF 3=FF0F 4=FFF0
+     * | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | F | F | on=FF off=F0 | S |
+     * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
+     *
+     * @param nAddressCode Number of the switch group (1..4)
+     * @param nChannelCode Number of the switch itself (1..4)
+     * @param bStatus Wether to switch on (true) or off (false)
+     *
+     * @return char[13]
+     */
     private String getCodeWordB(int nAddressCode, int nChannelCode,
-                    boolean bStatus) {
-            int nReturnPos = 0;
-            char[] sReturn = new char[13];
-            String[] code = new String[] { "FFFF", "0FFF", "F0FF", "FF0F", "FFF0" };
-            if (nAddressCode < 1 || nAddressCode > 4 || nChannelCode < 1
-                            || nChannelCode > 4) {
-                    return "";
-            }
-            for (int i = 0; i < 4; i++) {
-                    sReturn[nReturnPos++] = code[nAddressCode].charAt(i);
-            }
-            for (int i = 0; i < 4; i++) {
-                    sReturn[nReturnPos++] = code[nChannelCode].charAt(i);
-            }
+            boolean bStatus) {
+        int nReturnPos = 0;
+        char[] sReturn = new char[13];
+        String[] code = new String[]{"FFFF", "0FFF", "F0FF", "FF0F", "FFF0"};
+        if (nAddressCode < 1 || nAddressCode > 4 || nChannelCode < 1
+                || nChannelCode > 4) {
+            return "";
+        }
+        for (int i = 0; i < 4; i++) {
+            sReturn[nReturnPos++] = code[nAddressCode].charAt(i);
+        }
+        for (int i = 0; i < 4; i++) {
+            sReturn[nReturnPos++] = code[nChannelCode].charAt(i);
+        }
+        sReturn[nReturnPos++] = 'F';
+        sReturn[nReturnPos++] = 'F';
+        sReturn[nReturnPos++] = 'F';
+        if (bStatus) {
             sReturn[nReturnPos++] = 'F';
-            sReturn[nReturnPos++] = 'F';
-            sReturn[nReturnPos++] = 'F';
-            if (bStatus) {
-                    sReturn[nReturnPos++] = 'F';
-            } else {
-                    sReturn[nReturnPos++] = '0';
-            }
-            return new String(sReturn);
+        } else {
+            sReturn[nReturnPos++] = '0';
+        }
+        return new String(sReturn);
     }
 
     /**
@@ -224,53 +235,47 @@ public class RCSwitch {
     }
 
     /**
-     * Sends a "Sync" Bit
-     *                       _
-     * Waveform Protocol 1: | |_______________________________
-     *                       _
-     * Waveform Protocol 2: | |__________
+     * Sends a "Sync" Bit _ Waveform Protocol 1: |
+     * |_______________________________ _ Waveform Protocol 2: | |__________
      */
     private void sendSync() {
-        this.transmit(1, 31);
+        this.transmit(this.protocol.getSyncBit());
     }
 
     /**
-     * Sends a Tri-State "0" Bit
-     *            _     _
-     * Waveform: | |___| |___
+     * Sends a Tri-State "0" Bit _ _ Waveform: | |___| |___
      */
     private void sendT0() {
-        this.transmit(1, 3);
-        this.transmit(1, 3);
+        this.transmit(this.protocol.getZeroBit());
+        this.transmit(this.protocol.getZeroBit());
     }
 
     /**
-     * Sends a Tri-State "1" Bit
-     *            ___   ___
-     * Waveform: |   |_|   |_
+     * Sends a Tri-State "1" Bit ___ ___ Waveform: | |_| |_
      */
     private void sendT1() {
-        this.transmit(3, 1);
-        this.transmit(3, 1);
+        this.transmit(this.protocol.getOneBit());
+        this.transmit(this.protocol.getOneBit());
     }
 
     /**
-     * Sends a Tri-State "F" Bit
-     *            _     ___
-     * Waveform: | |___|   |_
+     * Sends a Tri-State "F" Bit _ ___ Waveform: | |___| |_
      */
     private void sendTF() {
-        this.transmit(1, 3);
-        this.transmit(3, 1);
+        this.transmit(this.protocol.getZeroBit());
+        this.transmit(this.protocol.getOneBit());
+    }
+
+    private void transmit(final Waveform waveform) {
+        transmit(waveform.getHigh(), waveform.getLow());
     }
 
     private void transmit(int nHighPulses, int nLowPulses) {
         if (this.transmitterPin != null) {
             this.transmitterPin.high();
-            Gpio.delayMicroseconds(this.pulseLength * nHighPulses);
-
+            Gpio.delayMicroseconds(this.protocol.getPulseLength() * nHighPulses);
             this.transmitterPin.low();
-            Gpio.delayMicroseconds(this.pulseLength * nLowPulses);
+            Gpio.delayMicroseconds(this.protocol.getPulseLength() * nLowPulses);
         }
     }
 
@@ -278,7 +283,8 @@ public class RCSwitch {
      * convenient method to convert a string like "11011" to a BitSet.
      *
      * @param address the string representation of the rc address
-     * @return a bitset containing the address that can be used for switchOn()/switchOff()
+     * @return a bitset containing the address that can be used for
+     * switchOn()/switchOff()
      */
     public static BitSet getSwitchGroupAddress(String address) {
         if (address.length() != 5) {
