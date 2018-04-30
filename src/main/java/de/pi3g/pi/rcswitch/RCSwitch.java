@@ -128,6 +128,43 @@ public class RCSwitch {
     }
 
     /**
+     * Send a string of bits
+     *
+     * @param bitString Bits (e.g. 000000000001010100010001)
+     */
+    public void send(final String bitString) {
+        BitSet bitSet = new BitSet(bitString.length());
+        for (int i = 0; i < bitString.length(); i++) {
+            if (bitString.charAt(i) == '1') {
+                bitSet.set(i);
+            } 
+        }
+        send(bitSet, bitString.length());
+    }
+
+    /**
+     * Send a set of bits
+     *
+     * @param bitSet Bits (000000000001010100010001)
+     * @param length Length of the bit string (24)
+     */
+    public void send(final BitSet bitSet, int length) {
+        if (transmitterPin != null) {
+            for (int nRepeat = 0; nRepeat < repeatTransmit; nRepeat++) {
+                for (int i = 0; i < length; i++) {
+                    if (bitSet.get(i)) {
+                        transmit(protocol.getOneBit());
+                    } else {
+                        transmit(protocol.getZeroBit());
+                    }
+                }
+                sendSync();
+            }
+            transmitterPin.low();
+        }
+    }
+
+    /**
      * Like getCodeWord (Type A)
      */
     private String getCodeWordA(BitSet switchGroupAddress, int switchCode, boolean status) {
@@ -215,22 +252,25 @@ public class RCSwitch {
      *
      * @param codeWord /^[10FS]*$/ -> see getCodeWord
      */
-    private void sendTriState(String codeWord) {
-        for (int nRepeat = 0; nRepeat < repeatTransmit; nRepeat++) {
-            for (int i = 0; i < codeWord.length(); ++i) {
-                switch (codeWord.charAt(i)) {
-                    case '0':
-                        this.sendT0();
-                        break;
-                    case 'F':
-                        this.sendTF();
-                        break;
-                    case '1':
-                        this.sendT1();
-                        break;
+    public void sendTriState(String codeWord) {
+        if (transmitterPin != null) {
+            for (int nRepeat = 0; nRepeat < repeatTransmit; nRepeat++) {
+                for (int i = 0; i < codeWord.length(); ++i) {
+                    switch (codeWord.charAt(i)) {
+                        case '0':
+                            this.sendT0();
+                            break;
+                        case 'F':
+                            this.sendTF();
+                            break;
+                        case '1':
+                            this.sendT1();
+                            break;
+                    }
                 }
+                this.sendSync();
             }
-            this.sendSync();
+            transmitterPin.low();
         }
     }
 
@@ -246,24 +286,24 @@ public class RCSwitch {
      * Sends a Tri-State "0" Bit _ _ Waveform: | |___| |___
      */
     private void sendT0() {
-        this.transmit(this.protocol.getZeroBit());
-        this.transmit(this.protocol.getZeroBit());
+        transmit(this.protocol.getZeroBit());
+        transmit(this.protocol.getZeroBit());
     }
 
     /**
      * Sends a Tri-State "1" Bit ___ ___ Waveform: | |_| |_
      */
     private void sendT1() {
-        this.transmit(this.protocol.getOneBit());
-        this.transmit(this.protocol.getOneBit());
+        transmit(this.protocol.getOneBit());
+        transmit(this.protocol.getOneBit());
     }
 
     /**
      * Sends a Tri-State "F" Bit _ ___ Waveform: | |___| |_
      */
     private void sendTF() {
-        this.transmit(this.protocol.getZeroBit());
-        this.transmit(this.protocol.getOneBit());
+        transmit(this.protocol.getZeroBit());
+        transmit(this.protocol.getOneBit());
     }
 
     private void transmit(final Waveform waveform) {
@@ -271,12 +311,10 @@ public class RCSwitch {
     }
 
     private void transmit(int nHighPulses, int nLowPulses) {
-        if (this.transmitterPin != null) {
-            this.transmitterPin.high();
-            Gpio.delayMicroseconds(this.protocol.getPulseLength() * nHighPulses);
-            this.transmitterPin.low();
-            Gpio.delayMicroseconds(this.protocol.getPulseLength() * nLowPulses);
-        }
+        this.transmitterPin.high();
+        Gpio.delayMicroseconds(this.protocol.getPulseLength() * nHighPulses);
+        this.transmitterPin.low();
+        Gpio.delayMicroseconds(this.protocol.getPulseLength() * nLowPulses);
     }
 
     /**
@@ -295,6 +333,10 @@ public class RCSwitch {
             bitSet.set(i, address.charAt(i) == '1');
         }
         return bitSet;
+    }
+
+    public void setProtocol(final Protocol protocol) {
+        this.protocol = protocol;
     }
 
 }
