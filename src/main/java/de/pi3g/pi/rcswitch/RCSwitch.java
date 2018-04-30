@@ -32,11 +32,11 @@ import com.pi4j.wiringpi.Gpio;
 import java.util.BitSet;
 
 /**
- * Transmittes signals to 433 MHz electrical switching units. Based on the
- * Arduino library but enhanced to fit a more object oriented approach in Java.
+ * Transmittes signals to 433 MHz electrical switching units. Based on the Arduino library
+ * but enhanced to fit a more object oriented approach in Java.
  * <p>
- * This library is designed to be used with a RF transmitter like this one:
- * http://www.watterott.com/de/RF-Link-Sender-434MHz
+ * This library is designed to be used with a RF transmitter like this 
+ * one: http://www.watterott.com/de/RF-Link-Sender-434MHz
  * </p>
  * <p>
  * Just connect the DATA IN Pin with the pin provided in the constructor. The
@@ -210,10 +210,8 @@ public class RCSwitch {
      * "S" (synchronous bit)
      *
      * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
-     * | 4 bits address (switch group) | 4 bits address (switch number) | 1 bit
-     * address (not used, so never mind) | 1 bit address (not used, so never
-     * mind) | 2 data bits (on|off) | 1 sync bit | | 1=0FFF 2=F0FF 3=FF0F 4=FFF0
-     * | 1=0FFF 2=F0FF 3=FF0F 4=FFF0 | F | F | on=FF off=F0 | S |
+     * | 4 bits address (switch group) | 4 bits address (switch number) | 1 bit address (not used, so never mind) | 1 bit address (not used, so never mind) | 2 data bits (on|off) | 1 sync bit |
+     * | 1=0FFF 2=F0FF 3=FF0F 4=FFF0   | 1=0FFF 2=F0FF 3=FF0F 4=FFF0    | F                                       | F                                       | on=FF off=F0         | S          |
      * +-------------------------------+--------------------------------+-----------------------------------------+-----------------------------------------+----------------------+------------+
      *
      * @param nAddressCode Number of the switch group (1..4)
