@@ -137,7 +137,7 @@ public class RCSwitch {
         for (int i = 0; i < bitString.length(); i++) {
             if (bitString.charAt(i) == '1') {
                 bitSet.set(i);
-            } 
+            }
         }
         send(bitSet, bitString.length());
     }
@@ -311,10 +311,18 @@ public class RCSwitch {
     }
 
     private void transmit(int nHighPulses, int nLowPulses) {
-        this.transmitterPin.high();
+        adjustPinValue(true);
         Gpio.delayMicroseconds(this.protocol.getPulseLength() * nHighPulses);
-        this.transmitterPin.low();
+        adjustPinValue(false);
         Gpio.delayMicroseconds(this.protocol.getPulseLength() * nLowPulses);
+    }
+
+    private void adjustPinValue(boolean value) {
+        if (protocol.isInvertedSignal() ^ value) {
+            transmitterPin.high();
+        } else {
+            transmitterPin.low();
+        }
     }
 
     /**
