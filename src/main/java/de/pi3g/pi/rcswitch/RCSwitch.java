@@ -58,6 +58,7 @@ import java.util.BitSet;
  *
  * @author Suat Özgür
  * @author Florian Frankenberger
+ * @author Christoph Stiefel
  */
 public class RCSwitch {
 
