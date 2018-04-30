@@ -24,7 +24,7 @@ package de.pi3g.pi.rcswitch;
  */
 public class Waveform {
 
-    public Waveform(int low, int high) {
+    public Waveform(int high, int low) {
         this.low = low;
         this.high = high;
     }
